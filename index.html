@@ -370,7 +370,7 @@
           .to(c,{opacity:0,scale:0.9,y:()=>dev().isMobile?-12:-22,filter:()=>dev().isMobile?'none':'blur(4px)',borderColor:'rgba(255,255,255,0.07)',boxShadow:'none',ease:'power3.in',duration:DE},IN+HO+DE*0.2)
           .to(overlay,{opacity:0,ease:'power2.in',duration:DE},IN+HO);
       });
-      if(!dev().isMobile){const tv=vhPC()*cards.length+55;const sp=cards.map((_,i)=>{const fo=8,cs=i===0?fo:fo+i*vhPC();const frac=i===0?0.60:0.70;return Math.min(0.94,(cs+vhPC()*frac)/tv);});ScrollTrigger.create({trigger:section,start:'top top',end:'bottom bottom',snap:{snapTo:sp,duration:{min:0.12,max:0.25},delay:0.04,ease:'power1.out'}});}
+      cards.forEach(c=>{c.style.position='relative';c.style.opacity='1';c.style.transform='none';c.style.filter='none';c.style.pointerEvents='auto';});
       ScrollTrigger.addEventListener('refreshInit',measure);
       window.addEventListener('devicechange',()=>ScrollTrigger.refresh(),{passive:true});
       ScrollTrigger.refresh();
