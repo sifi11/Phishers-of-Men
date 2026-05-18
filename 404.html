@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Not Found</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: #00FF00;
+            font-family: 'Courier New', monospace;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .terminal {
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .terminal-header {
+            border-bottom: 1px solid #00FF00;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+
+        .ascii-art {
+            font-size: 10px;
+            line-height: 1.2;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .error-message {
+            margin: 20px 0;
+        }
+
+        .command-line {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+
+        .prompt {
+            color: #00FF00;
+            margin-right: 8px;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: #00FF00;
+            animation: blink 1s infinite;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .glitch {
+            animation: glitch 3s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 90%, 100% { transform: translate(0); }
+            91% { transform: translate(-2px, 2px); }
+            92% { transform: translate(2px, -2px); }
+            93% { transform: translate(-2px, -2px); }
+        }
+
+        .scan-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 255, 0, 0.3);
+            animation: scan 4s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .crt::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .crt::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: rgba(0, 255, 0, 0.02);
+            opacity: 0;
+            z-index: 2;
+            pointer-events: none;
+            animation: flicker 0.15s infinite;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.27861; }
+            5% { opacity: 0.34769; }
+            10% { opacity: 0.23604; }
+            15% { opacity: 0.90626; }
+            20% { opacity: 0.18128; }
+            25% { opacity: 0.83891; }
+            30% { opacity: 0.65583; }
+            35% { opacity: 0.67807; }
+            40% { opacity: 0.26559; }
+            45% { opacity: 0.84693; }
+            50% { opacity: 0.96019; }
+            55% { opacity: 0.08594; }
+            60% { opacity: 0.20313; }
+            65% { opacity: 0.71988; }
+            70% { opacity: 0.53455; }
+            75% { opacity: 0.37288; }
+            80% { opacity: 0.71428; }
+            85% { opacity: 0.70419; }
+            90% { opacity: 0.7003; }
+            95% { opacity: 0.36108; }
+            100% { opacity: 0.24387; }
+        }
+
+        .options {
+            margin-top: 30px;
+        }
+
+        .option-item {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        a {
+            color: #00FF00;
+            text-decoration: none;
+            text-shadow: 0 0 5px #00FF00;
+            transition: all 0.3s;
+        }
+
+        a:hover {
+            text-shadow: 0 0 10px #00FF00, 0 0 20px #00FF00;
+            letter-spacing: 2px;
+        }
+
+        .warning {
+            color: #FF0000;
+            text-shadow: 0 0 5px #FF0000;
+            animation: warning-blink 1.5s infinite;
+        }
+
+        @keyframes warning-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        @media (max-width: 768px) {
+            .ascii-art {
+                font-size: 6px;
+            }
+            .terminal {
+                padding: 10px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body class="crt">
+    <div class="scan-line"></div>
+    <div class="terminal">
+        <div class="terminal-header">
+            root@server:/var/www# <span id="time"></span>
+        </div>
+
+        <div class="ascii-art glitch">
+<pre>
+[CRITICAL] 0x00F404A0 : KERNEL_PAGE_FAULT_IN_NONPAGED_AREA
+------------------------------------------------------------
+*** STOP: 0x00000404 (0x00000000, 0x00000001, 0x00F404A0)
+
+An attempt was made to access a virtual memory address that does not exist.
+The requested URI or resource pointer could not be resolved by the host.
+
+    File:     /src/core/router/http_request.cpp
+    Line:     404
+    Function: Router::resolve_target_endpoint()
+    Status:   STATUS_OBJECT_NAME_NOT_FOUND
+
+Dumping CPU Registers:
+EAX: 0x00000404  EBX: 0xFFFFFFFF  ECX: 0x00000000  EDX: 0x7C90E1FE
+ESI: 0x00F404A0  EDI: 0x00000001  EBP: 0x0022FF48  ESP: 0x0022FF1C
+
+[!!!] Execution halted. Please navigate back to home or contact the sysadmin.
+</pre>
+        </div>
+
+        <div class="error-message">
+            <div class="command-line">
+                <span class="prompt">root@server:~#</span>
+                <span>cat /var/log/apache2/error.log</span>
+            </div>
+            <div style="margin: 15px 0 15px 20px;">
+                <div class="warning">[ERROR] HTTP 404: Resource Not Found</div>
+                <div>Segmentation fault (core dumped)</div>
+                <div>Stack trace:</div>
+                <div style="margin-left: 20px;">
+                    at request_handler() [0x00007fff8b2c4000]<br>
+                    at route_lookup() [0x00007fff8b2c4120]<br>
+                    at <span class="warning">page_not_found()</span> [0x00007fff8b2c4240]
+                </div>
+            </div>
+
+            <div class="command-line">
+                <span class="prompt">root@server:~#</span>
+                <span>ls -la requested_page/</span>
+            </div>
+            <div style="margin: 10px 0 15px 20px;">
+                <span class="warning">ls: cannot access 'requested_page/': No such file or directory</span>
+            </div>
+
+            <div class="command-line">
+                <span class="prompt">root@server:~#</span>
+                <span>echo $STATUS</span>
+            </div>
+            <div style="margin: 10px 0 15px 20px;">
+                The page you're looking for has been <span class="warning">rm -rf</span>'d into oblivion.
+            </div>
+        </div>
+
+        <div class="options">
+            <div class="command-line">
+                <span class="prompt">root@server:~#</span>
+                <span>cat available_options.txt</span>
+            </div>
+            <div style="margin: 15px 0 15px 20px;">
+                <div class="option-item">[1] <a href="/">cd /home</a> - Return to homepage</div>
+                <div class="option-item">[2] <a href="javascript:history.back()">git checkout HEAD~1</a> - Go back</div>
+                <div class="option-item">[3] <a href="/sitemap">grep -r "sitemap"</a> - View sitemap</div>
+                <div class="option-item">[4] <a href="mailto:admin@yoursite.com">mail -s "404 Report" admin</a> - Report this error</div>
+            </div>
+
+            <div class="command-line" style="margin-top: 30px;">
+                <span class="prompt">root@server:~#</span>
+                <span id="typed-text"></span>
+                <span class="cursor"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update timestamp
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour12: false });
+            document.getElementById('time').textContent = timeStr;
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // Typing effect
+        const phrases = [
+            'searching...',
+            'scanning directories...',
+            './exploit.sh',
+            'access denied',
+            'trying alternative routes...'
+        ];
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const typedTextEl = document.getElementById('typed-text');
+
+        function type() {
+            const currentPhrase = phrases[phraseIndex];
+            
+            if (isDeleting) {
+                typedTextEl.textContent = currentPhrase.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typedTextEl.textContent = currentPhrase.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            let typeSpeed = isDeleting ? 50 : 100;
+
+            if (!isDeleting && charIndex === currentPhrase.length) {
+                typeSpeed = 2000;
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+                typeSpeed = 500;
+            }
+
+            setTimeout(type, typeSpeed);
+        }
+
+        setTimeout(type, 1000);
+
+        // Random glitch effect
+        setInterval(() => {
+            if (Math.random() > 0.95) {
+                document.querySelector('.ascii-art').style.transform = `translate(${Math.random() * 4 - 2}px, ${Math.random() * 4 - 2}px)`;
+                setTimeout(() => {
+                    document.querySelector('.ascii-art').style.transform = 'translate(0, 0)';
+                }, 50);
+            }
+        }, 100);
+    </script>
+</body>
+</html>
