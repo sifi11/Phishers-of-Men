@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog — Phishers of Men</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="logo">PHISHERS_OF_MEN</a>
+    <ul class="nav-links">
+      <li><a href="blog.html" class="active">blog</a></li>
+      <li><a href="yt.html">videos</a></li>
+      <li><a href="hos.html">hall of shame</a></li>
+      <li><a href="pgp.html">pgp</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <div class="prompt">
+      <h1>BLOG</h1>
+    </div>
+
+    <div id="blog-container"><p style="color:var(--dim);font-family:var(--f-mono);font-size:0.78rem;">loading...</p></div>
+  </main>
+
+  <script>
+    const posts = [
+      { title: "Hello World", file: "articles/helloworld.md", date: "2026-06-11" }
+    ];
+
+    async function loadBlog() {
+      const c = document.getElementById('blog-container');
+      c.innerHTML = '';
+      for (const p of posts) {
+        try {
+          const r = await fetch(p.file);
+          if (!r.ok) throw new Error();
+          const text = await r.text();
+          const div = document.createElement('article');
+          div.className = 'post';
+          div.innerHTML = `<h2>${p.title}</h2><div class="post-meta">date: ${p.date}</div><pre class="post-content">${text.replace(/</g,'&lt;')}</pre>`;
+          c.appendChild(div);
+        } catch {
+          c.innerHTML += `<p style="color:var(--dim);font-family:var(--f-mono);font-size:0.78rem;">error loading ${p.file}</p>`;
+        }
+      }
+    }
+    loadBlog();
+  </script>
+</body>
+</html>
