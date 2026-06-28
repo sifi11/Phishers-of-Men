@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 — PHISHERS OF MEN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Syne:wght@700;800&family=Fragment+Mono&display=swap" rel="stylesheet" />
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.net.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: rgba(255,255,255,0.06);
+      --amber: #00ff00;
+      --slate: #8b95a1;
+      --text: #cdd5df;
+      --card: rgba(22,27,34,0.75);
+      --f-head: 'Syne', sans-serif;
+      --f-body: 'Space Grotesk', sans-serif;
+      --f-mono: 'Fragment Mono', monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--f-body);
+      line-height: 1.6;
+      min-width: 320px;
+      overflow-x: hidden;
+      background-image: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(255,255,255,0.005) 2px,
+        rgba(255,255,255,0.005) 4px
+      );
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(0,255,0,0.045) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(205,213,223,0.028) 1px, transparent 1px);
+      background-size: 72px 72px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent 75%);
+    }
+
+    ::selection { background: rgba(0,255,0,0.28); color: #fff; }
+
+    #vanta-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      opacity: 0.28;
+      pointer-events: none;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 1rem 2rem;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      z-index: 10;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .logo {
+      font-family: var(--f-head);
+      color: var(--amber);
+      text-decoration: none;
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+
+    nav ul {
+      display: flex;
+      gap: 1.25rem;
+      list-style: none;
+    }
+
+    nav a {
+      color: var(--slate);
+      text-decoration: none;
+      font-size: .8rem;
+    }
+
+    nav a:hover { color: var(--amber); }
+
+    /* ── HAMBURGER ── */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 32px;
+      height: 32px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      z-index: 200;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 100%;
+      height: 2px;
+      background: var(--amber);
+      border-radius: 2px;
+      transition: transform 0.28s ease, opacity 0.28s ease;
+      transform-origin: center;
+    }
+
+    .hamburger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger[aria-expanded="true"] span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .nav-menu { display: flex; gap: 1.25rem; list-style: none; }
+
+    /* ── 404 MAIN ── */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7rem 2rem 4rem;
+      position: relative;
+    }
+
+    .error-stage {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 680px;
+      width: 100%;
+    }
+
+    /* Big 404 */
+    .error-code {
+      font-family: var(--f-head);
+      font-size: clamp(6rem, 22vw, 13rem);
+      font-weight: 800;
+      color: var(--amber);
+      letter-spacing: -4px;
+      line-height: 0.88;
+      position: relative;
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(32px);
+    }
+
+    .error-code::after {
+      content: '404';
+      position: absolute;
+      inset: 0;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(0,255,0,0.18);
+      transform: translate(3px, 3px);
+      pointer-events: none;
+    }
+
+    .error-divider {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--amber), transparent);
+      margin: 1.6rem auto;
+      opacity: 0;
+    }
+
+    .error-label {
+      font-family: var(--f-mono);
+      font-size: 0.65rem;
+      color: var(--amber);
+      letter-spacing: 4px;
+      margin-bottom: 0.6rem;
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    .error-title {
+      font-family: var(--f-head);
+      font-size: clamp(1.3rem, 4vw, 2rem);
+      color: var(--text);
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 1rem;
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    .error-desc {
+      color: var(--slate);
+      font-size: 0.95rem;
+      line-height: 1.75;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    .error-desc .mono {
+      font-family: var(--f-mono);
+      color: var(--amber);
+      font-size: 0.85rem;
+    }
+
+    .error-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    .btn {
+      padding: 0.9rem 1.8rem;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      display: inline-block;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+
+    .btn:hover { opacity: 0.85; transform: translateY(-1px); }
+    .btn-primary { background: var(--amber); color: #000; }
+    .btn-secondary { border: 1px solid var(--slate); color: var(--text); }
+
+    /* Signal lines (mirrored from hero) */
+    .error-signal {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.35;
+    }
+
+    .error-signal span {
+      position: absolute;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,255,0,0.6), transparent);
+    }
+
+    .error-signal span:nth-child(1) { left: 0; top: 22%; width: min(30vw, 280px); }
+    .error-signal span:nth-child(2) { right: 0; top: 58%; width: min(24vw, 220px); }
+    .error-signal span:nth-child(3) { left: 10%; bottom: 14%; width: min(38vw, 340px); opacity: 0.5; }
+
+    /* Glitch scan line */
+    .scan-line {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: rgba(0, 255, 0, 0.15);
+      animation: scan 6s linear infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @keyframes scan {
+      0%   { top: 0; opacity: 1; }
+      90%  { opacity: 0.4; }
+      100% { top: 100%; opacity: 0; }
+    }
+
+    /* Status bar at bottom */
+    .status-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 0.45rem 2rem;
+      border-top: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      opacity: 0;
+    }
+
+    .status-left {
+      font-family: var(--f-mono);
+      font-size: 0.6rem;
+      color: var(--slate);
+      letter-spacing: 1.5px;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--amber);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,255,0,0.4); }
+      50%       { opacity: 0.6; box-shadow: 0 0 0 4px rgba(0,255,0,0); }
+    }
+
+    .status-right {
+      font-family: var(--f-mono);
+      font-size: 0.6rem;
+      color: var(--slate);
+      letter-spacing: 1.5px;
+    }
+
+    /* Typed cursor */
+    .typed-cursor {
+      display: inline-block;
+      width: 7px;
+      height: 13px;
+      background: var(--amber);
+      margin-left: 2px;
+      vertical-align: middle;
+      animation: cursor-blink 0.9s step-end infinite;
+    }
+
+    @keyframes cursor-blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 760px) {
+      .hamburger { display: flex; }
+      .nav-menu {
+        display: none;
+        flex-direction: column;
+        position: fixed;
+        top: 0; right: 0;
+        width: 220px;
+        height: 100vh;
+        background: rgba(13,17,23,0.97);
+        border-left: 1px solid rgba(0,255,0,0.18);
+        padding: 5rem 1.5rem 2rem;
+        gap: 0;
+        z-index: 100;
+        backdrop-filter: blur(14px);
+      }
+      .nav-menu.is-open { display: flex; }
+      .nav-menu li { border-bottom: 1px solid rgba(255,255,255,0.06); }
+      .nav-menu a { display: block; padding: 0.85rem 0; font-size: 0.85rem; letter-spacing: 2px; color: var(--text); }
+      .nav-menu a:hover { color: var(--amber); }
+      main { padding: 6rem 1.25rem 3.5rem; }
+      .error-code { letter-spacing: -2px; }
+      .error-actions { flex-direction: column; align-items: center; }
+      .btn { width: 100%; max-width: 280px; text-align: center; }
+      .status-bar { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="vanta-bg"></div>
+  <div class="scan-line"></div>
+
+  <header id="site-header">
+    <nav>
+      <a href="index.html" class="logo">PHISHERS_OF_MEN</a>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="index.html">HOME</a></li>
+        <li><a href="projects.html">PROJECTS</a></li>
+        <li><a href="terminal.html">TERMINAL</a></li>
+        <li><a href="index.html#team">TEAM</a></li>
+        <li><a href="index.html#contact">CONTACT</a></li>
+        <li><a href="phishstral.html">PHISHSTRAL</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="error-signal" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="error-stage">
+      <div class="error-code" id="error-code">404</div>
+      <div class="error-divider" id="error-divider"></div>
+      <p class="error-label" id="error-label">// SIGNAL LOST</p>
+      <h1 class="error-title" id="error-title">PAGE NOT FOUND</h1>
+      <p class="error-desc" id="error-desc">
+        The resource at <span class="mono" id="typed-path"></span><span class="typed-cursor"></span>
+        doesn't exist on this server.<br>
+        It may have been moved, deleted, or you may have followed a dead link.
+      </p>
+      <div class="error-actions" id="error-actions">
+        <a href="index.html" class="btn btn-primary">RETURN HOME</a>
+        <a href="javascript:history.back()" class="btn btn-secondary">GO BACK</a>
+      </div>
+    </div>
+  </main>
+
+  <div class="status-bar" id="status-bar">
+    <div class="status-left">
+      <span class="status-dot"></span>
+      <span>HTTP STATUS: 404</span>
+      <span>|</span>
+      <span id="status-time">00:00:00</span>
+    </div>
+    <div class="status-right">PHISHERS_OF_MEN &mdash; NOT FOUND</div>
+  </div>
+
+  <!-- Glitch canvas -->
+  <canvas id="glitch-canvas" style="position:fixed;inset:0;width:100%;height:100%;z-index:9999;pointer-events:none;opacity:0;"></canvas>
+
+  <script>
+    /* ── Device state ── */
+    const isMobile = window.innerWidth <= 760;
+    const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ── Vanta ── */
+    window.addEventListener('load', () => {
+      const el = document.getElementById('vanta-bg');
+      if (!el || !window.VANTA || isMobile || isReducedMotion) return;
+      window.VANTA.NET({
+        el,
+        mouseControls: true,
+        touchControls: false,
+        gyroControls: false,
+        color: 0x00ff00,
+        backgroundColor: 0x0d1117,
+        points: 8,
+        maxDistance: 24,
+        spacing: 20,
+        showDots: true
+      });
+    });
+
+    /* ── Status time ── */
+    function updateTime() {
+      const now = new Date();
+      const t = now.toLocaleTimeString('en-US', { hour12: false });
+      const el = document.getElementById('status-time');
+      if (el) el.textContent = t;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    /* ── Typed path ── */
+    const rawPath = window.location.pathname || '/unknown';
+    const displayPath = rawPath.length > 38 ? rawPath.slice(0, 35) + '...' : rawPath;
+    let typedI = 0;
+    const typedEl = document.getElementById('typed-path');
+
+    function typePath() {
+      if (typedI < displayPath.length) {
+        typedEl.textContent += displayPath[typedI++];
+        setTimeout(typePath, 48);
+      }
+    }
+
+    /* ── GSAP entrance ── */
+    gsap.to('#error-code', {
+      opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', delay: 0.15
+    });
+    gsap.to('#error-divider', {
+      opacity: 1, duration: 0.6, ease: 'power2.out', delay: 0.55
+    });
+    gsap.to(['#error-label', '#error-title', '#error-desc', '#error-actions'], {
+      opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', stagger: 0.12, delay: 0.65,
+      onComplete: () => {
+        setTimeout(typePath, 200);
+      }
+    });
+    gsap.to('#status-bar', {
+      opacity: 1, duration: 0.5, delay: 1.2
+    });
+
+    /* ── Glitch effect on 404 number (periodic) ── */
+    const codeEl = document.getElementById('error-code');
+    if (!isReducedMotion) {
+      setInterval(() => {
+        if (Math.random() > 0.72) {
+          const dx = (Math.random() - 0.5) * 6;
+          const dy = (Math.random() - 0.5) * 4;
+          codeEl.style.transform = `translate(${dx}px, ${dy}px)`;
+          codeEl.style.textShadow = `${-dx}px 0 rgba(255,0,80,0.6), ${dx}px 0 rgba(0,255,255,0.6)`;
+          setTimeout(() => {
+            codeEl.style.transform = '';
+            codeEl.style.textShadow = '';
+          }, 60);
+        }
+      }, 1800);
+    }
+
+    /* ── Hamburger ── */
+    (function () {
+      const btn = document.getElementById('hamburger');
+      const menu = document.getElementById('nav-menu');
+      if (!btn || !menu) return;
+      btn.addEventListener('click', () => {
+        const open = menu.classList.toggle('is-open');
+        btn.setAttribute('aria-expanded', open);
+      });
+      menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+        menu.classList.remove('is-open');
+        btn.setAttribute('aria-expanded', 'false');
+      }));
+      document.addEventListener('click', e => {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.remove('is-open');
+          btn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
